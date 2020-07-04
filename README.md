@@ -12,7 +12,7 @@
 `varchar(255)` return_timestamp [primary key], `double` paid_price, `int` product_id, `varchar(255)` product_name, `int` quantity, `double` selling_price, `bigint` pr_gap
 
 
-## Documentation: /product
+## Documentation: `/product`
 ---
 
 `/nameId`: get the name of the product with specified id  [parameters: `Integer` id]
