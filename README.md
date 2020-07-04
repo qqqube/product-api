@@ -75,3 +75,11 @@
 `/expectedProfit`: calculate profit from selling all products in table [no parameters]
 
 `/clear`: delete all entries in the product and purchase tables; reset the product id sequence to start from 1 [no parameters]
+
+## Sanity Checks
+---
+Run simple tests:
+
+`chmod +x testDriver.sh`
+
+`./testDriver.sh`
