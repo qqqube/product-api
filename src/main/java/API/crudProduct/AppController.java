@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 import java.time.Duration;
 
 @Controller
-@RequestMapping
+@RequestMapping(path="/product")
 public class AppController {
 
     @Autowired
