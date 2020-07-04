@@ -1,4 +1,4 @@
-#Crud API with Spring Boot using MySQL and JPA
+# Crud API with Spring Boot using MySQL and JPA
 
 ## Database Tables
 ---
@@ -76,6 +76,7 @@
 
 `/clear`: delete all entries in the product and purchase tables; reset the product id sequence to start from 1 [no parameters]
 
+
 ## Sanity Checks
 ---
 Run simple tests:
@@ -83,3 +84,5 @@ Run simple tests:
 `chmod +x testDriver.sh`
 
 `./testDriver.sh`
+=======
+
