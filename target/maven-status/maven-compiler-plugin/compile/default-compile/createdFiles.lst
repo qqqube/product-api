@@ -1,0 +1,10 @@
+API/crudProduct/ReturnedProduct.class
+API/crudProduct/DatabaseUpdates.class
+API/crudProduct/DatabaseUpdater.class
+API/crudProduct/CrudProductApplication.class
+API/crudProduct/ProductRepository.class
+API/crudProduct/AppController.class
+API/crudProduct/ReturnedProductRepository.class
+API/crudProduct/Purchase.class
+API/crudProduct/Product.class
+API/crudProduct/PurchaseRepository.class
