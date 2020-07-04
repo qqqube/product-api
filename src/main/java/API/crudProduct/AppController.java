@@ -27,7 +27,7 @@ public class AppController {
     private DatabaseUpdater db;
 
     /* Get the name of the product with specified id */
-    @GetMapping(path="/nameId")
+    @RequestMapping(path="/nameId")
     public @ResponseBody String getNameID(@RequestParam Integer id) throws Exception{
         if (this.productRepo.existsById(id) == false) {
             throw new Exception("No product with that id exists.");
@@ -36,7 +36,7 @@ public class AppController {
     }
 
     /* Get the quantity of the product with specified id */
-    @GetMapping(path="/quantityId")
+    @RequestMapping(path="/quantityId")
     public @ResponseBody Integer getQuantityID(@RequestParam Integer id) throws Exception{
         if (this.productRepo.existsById(id) == false) {
             throw new Exception("No product with that id exists.");
@@ -45,7 +45,7 @@ public class AppController {
     }
 
     /* Get selling price of item with specified id */
-    @GetMapping(path="/sellingPriceId")
+    @RequestMapping(path="/sellingPriceId")
     public @ResponseBody Double getSellingPriceID(@RequestParam Integer id) throws Exception{
         if (this.productRepo.existsById(id) == false) {
             throw new Exception("No product with that id exists.");
@@ -54,7 +54,7 @@ public class AppController {
     }
 
     /* Get paid price of the item with specified id */
-    @GetMapping(path="/paidPriceId")
+    @RequestMapping(path="/paidPriceId")
     public @ResponseBody Double getPaidPriceID(@RequestParam Integer id) throws Exception {
         if (this.productRepo.existsById(id) == false) {
             throw new Exception("No product with that id exists.");
@@ -63,7 +63,7 @@ public class AppController {
     }
 
     /* Rename the product with the given id. */
-    @PostMapping(path="/renameId")
+    @RequestMapping(path="/renameId")
     public @ResponseBody void renameID(@RequestParam Integer id, @RequestParam String newName) throws Exception {
 
         Product prod = this.productRepo.existsById(id) == false ? null : this.productRepo.findById(id).get();
@@ -85,7 +85,7 @@ public class AppController {
     }
 
     /* Change the quantity of the product with the given id. */
-    @PostMapping(path="/updateQuantityId")
+    @RequestMapping(path="/updateQuantityId")
     public @ResponseBody void updateQuantityID(@RequestParam Integer id, @RequestParam Integer quantity) throws Exception {
         if (this.productRepo.existsById(id) == false) {
             throw new Exception("No product with that id exists.");
@@ -96,7 +96,7 @@ public class AppController {
     }
 
     /* Update paid price of specific product (specified by id). */
-    @PostMapping(path="/updatePaidPriceId")
+    @RequestMapping(path="/updatePaidPriceId")
     public @ResponseBody void updatePaidPriceID(@RequestParam Integer id, @RequestParam Double paidPrice) throws Exception {
 
         Product prod = this.productRepo.existsById(id) == false ? null : this.productRepo.findById(id).get();
@@ -119,7 +119,7 @@ public class AppController {
     }
 
     /* Update selling price of product specified by id. */
-    @PostMapping(path="/updateSellingPriceId")
+    @RequestMapping(path="/updateSellingPriceId")
     public @ResponseBody void updateSellingPriceID(@RequestParam Integer id, @RequestParam Double sellingPrice) throws Exception {
         if (this.productRepo.existsById(id) == false) {
             throw new Exception("No product with that id exists.");
@@ -130,7 +130,7 @@ public class AppController {
     }
 
     /* Removes the product with the given id. */
-    @PostMapping(path="/deleteId")
+    @RequestMapping(path="/deleteId")
     public @ResponseBody void removeProductID(@RequestParam Integer id) throws Exception {
         if (this.productRepo.existsById(id) == false) {
             throw new Exception("No product with that id exists.");
@@ -167,12 +167,13 @@ public class AppController {
     }
 
     /* Removes all products with the given name. */
-    @PostMapping(path="/deleteName")
+    @RequestMapping(path="/deleteName")
     public @ResponseBody void removeProduct(@RequestParam String name) throws Exception {
         int count = 0;
         Iterable<Product> allProducts = this.productRepo.findAll();
         for (Product prod : allProducts) {
             if (prod.getName().equals(name)) {
+                count++;
                 this.productRepo.delete(prod);
             }
         }
@@ -182,7 +183,7 @@ public class AppController {
     }
 
     /* Change the names of all products with the specified name. */
-    @PostMapping(path="/updateName")
+    @RequestMapping(path="/updateName")
     public @ResponseBody void updateName(@RequestParam String name, @RequestParam String newName) throws Exception {
         int count = 0;
         Iterable<Product> allProducts = this.productRepo.findAll();
@@ -207,7 +208,7 @@ public class AppController {
 
 
     /* Change the selling price of all products with the given name by some offset. */
-    @PostMapping(path="/updateSellingPriceOffsetName")
+    @RequestMapping(path="/updateSellingPriceOffsetName")
     public @ResponseBody void updateSellingPriceName(@RequestParam String name, @RequestParam Integer priceOffset) throws Exception {
         int count = 0;
         Iterable<Product> allProducts = this.productRepo.findAll();
@@ -288,7 +289,7 @@ public class AppController {
     }
 
     /* Get productID of purchase specified by datetime. */
-    @GetMapping(path="/purchaseProductId")
+    @RequestMapping(path="/purchaseProductId")
     public @ResponseBody String getPurchaseProductId(@RequestParam String date) throws Exception {
         if (this.purchaseRepo.existsById(date) == false) {
             throw new Exception("No purchase with that date exists.");
@@ -298,7 +299,7 @@ public class AppController {
     }
 
     /* Get product name of purchase specified by datetime. */
-    @GetMapping(path="/purchaseNameId")
+    @RequestMapping(path="/purchaseNameId")
     public @ResponseBody String getPurchaseName(@RequestParam String date) throws Exception {
         if (this.purchaseRepo.existsById(date) == false) {
             throw new Exception("No purchase with that date exists.");
@@ -308,7 +309,7 @@ public class AppController {
     }
 
     /* Get profit of purchase specified by datetime. */
-    @GetMapping(path="/purchaseProfit")
+    @RequestMapping(path="/purchaseProfit")
     public @ResponseBody Double getPurchaseProfit(@RequestParam String date) throws Exception {
         if (this.purchaseRepo.existsById(date) == false) {
             throw new Exception("No purchase with that date exists.");
@@ -318,7 +319,7 @@ public class AppController {
     }
 
     /* Get individual paid price of purchase's product specified by datetime. */
-    @GetMapping(path="/purchaseIndPaidPrice")
+    @RequestMapping(path="/purchaseIndPaidPrice")
     public @ResponseBody Double getPaidPricePurchase(@RequestParam String date) throws Exception {
         if (this.purchaseRepo.existsById(date) == false) {
             throw new Exception("No purchase with that date exists.");
@@ -328,7 +329,7 @@ public class AppController {
     }
 
     /* Get quantity of purchase's product, specified by datetime. */
-    @GetMapping(path="/purchaseQuantity")
+    @RequestMapping(path="/purchaseQuantity")
     public @ResponseBody Integer getPurchaseQuantity(@RequestParam String date) throws Exception {
         if (this.purchaseRepo.existsById(date) == false) {
             throw new Exception("No purchase with that date exists.");
@@ -412,7 +413,7 @@ public class AppController {
     }
 
     /* Get productID, provided return's PR gap in days */
-    @GetMapping(path="/returnPRGap")
+    @RequestMapping(path="/returnPRGap")
     public @ResponseBody Long returnPRGap(@RequestParam String date) throws Exception {
         if (this.returnRepo.existsById(date) == false) {
             throw new Exception("No return with that date exists.");
@@ -423,7 +424,7 @@ public class AppController {
 
 
     /* Get productID, provided return's timestamp */
-    @GetMapping(path="/returnProductID")
+    @RequestMapping(path="/returnProductID")
     public @ResponseBody Integer returnProductID(@RequestParam String date) throws Exception {
         if (this.returnRepo.existsById(date) == false) {
             throw new Exception("No return with that date exists.");
@@ -434,7 +435,7 @@ public class AppController {
 
 
     /* Get product name, provided return's timestamp */
-    @GetMapping(path="/returnProductName")
+    @RequestMapping(path="/returnProductName")
     public @ResponseBody String returnProductName(@RequestParam String date) throws Exception {
         if (this.returnRepo.existsById(date) == false) {
             throw new Exception("No return with that date exists.");
@@ -444,7 +445,7 @@ public class AppController {
     }
 
     /* Get product quantity, provided the return's timestamp*/
-    @GetMapping(path="/returnQuantity")
+    @RequestMapping(path="/returnQuantity")
     public @ResponseBody Integer returnQuantity(@RequestParam String date) throws Exception {
         if (this.returnRepo.existsById(date) == false) {
             throw new Exception("No return with that date exists.");
@@ -454,7 +455,7 @@ public class AppController {
     }
 
     /* Get selling price, provided the return's timestamp */
-    @GetMapping(path="/returnSellingPrice")
+    @RequestMapping(path="/returnSellingPrice")
     public @ResponseBody Double returnSellingPrice(@RequestParam String date) throws Exception {
         if (this.returnRepo.existsById(date) == false) {
             throw new Exception("No return with that date exists.");
@@ -464,7 +465,7 @@ public class AppController {
     }
 
     /* Get paid price, provided the return's timestamp */
-    @GetMapping(path="/returnPaidPrice")
+    @RequestMapping(path="/returnPaidPrice")
     public @ResponseBody Double returnPaidPrice(@RequestParam String date) throws Exception {
         if (this.returnRepo.existsById(date) == false) {
             throw new Exception("No return with that date exists.");
@@ -475,7 +476,7 @@ public class AppController {
 
     /* Process a return; add the product back to the product table with specified selling price */
     @RequestMapping(path="/processReturn")
-    public @ResponseBody String processReturn(@RequestParam String date, @RequestParam Double sellingPrice) throws Exception {
+    public @ResponseBody void processReturn(@RequestParam String date, @RequestParam Double sellingPrice) throws Exception {
         if (this.returnRepo.existsById(date) == false) {
             throw new Exception("No return with that date exists.");
         }
@@ -486,7 +487,6 @@ public class AppController {
                 prod.setQuantity(prod.getQuantity() + returnObj.getQuantity());
                 this.productRepo.save(prod);
                 this.returnRepo.delete(returnObj);
-                return "Return Processed.";
             }
 
         }
@@ -498,18 +498,16 @@ public class AppController {
         this.productRepo.save(prod);
         this.returnRepo.delete(returnObj);
 
-        return "Return Processed.";
     }
 
     /* Discards a return, specified by datetime */
-    @PostMapping(path="/removeReturn")
-    public @ResponseBody String removeReturn(@RequestParam String date) throws Exception{
+    @RequestMapping(path="/removeReturn")
+    public @ResponseBody void removeReturn(@RequestParam String date) throws Exception{
         if (this.returnRepo.existsById(date) == false) {
             throw new Exception("No return with that date exists.");
         }
         ReturnedProduct returnObj = this.returnRepo.findById(date).get();
         this.returnRepo.delete(returnObj);
-        return "Return removed.";
     }
 
 
@@ -776,26 +774,26 @@ public class AppController {
     }
 
     /* Return all Purchases in the purchase table */
-    @GetMapping(path="/allPurchases")
+    @RequestMapping(path="/allPurchases")
     public @ResponseBody Iterable<Purchase> getAllPurchases() {
         return this.purchaseRepo.findAll();
     }
 
     /* Return all Returns in the returned_product table */
-    @GetMapping(path="/allReturns")
+    @RequestMapping(path="/allReturns")
     public @ResponseBody Iterable<ReturnedProduct> getAllReturns() {
         return this.returnRepo.findAll();
     }
 
     /* Return all products in product table. */
-    @GetMapping(path="/allProducts")
+    @RequestMapping(path="/allProducts")
     public @ResponseBody Iterable<Product> getAllProducts() {
         /* Returns a JSON or XML with the products */
         return this.productRepo.findAll();
     }
 
     /* Add a product to the product table. */
-    @PostMapping(path="/add")
+    @RequestMapping(path="/add")
     public @ResponseBody void addNewProduct(@RequestParam String name, @RequestParam Integer quantity,
                                               @RequestParam Double paidPrice, @RequestParam Double sellingPrice) {
 

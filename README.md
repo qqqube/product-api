@@ -139,6 +139,8 @@ number of products [parameters: `Integer` quantity]
 ---
 Run simple tests:
 
+`mvn spring-boot:run`
+
 `chmod +x testDriver.sh`
 
 `./testDriver.sh`
