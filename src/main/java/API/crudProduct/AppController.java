@@ -2,12 +2,18 @@ package API.crudProduct;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.http.ResponseEntity;
 import java.util.List;
 import java.util.ArrayList;
 import java.time.LocalDateTime;
@@ -27,44 +33,49 @@ public class AppController {
     private DatabaseUpdater db;
 
     /* Get the name of the product with specified id */
-    @RequestMapping(path="/nameId")
-    public @ResponseBody String getNameID(@RequestParam Integer id) throws Exception{
+    @GetMapping(path="/nameId")
+    @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody Object getNameID(@RequestParam Integer id) {
         if (this.productRepo.existsById(id) == false) {
-            throw new Exception("No product with that id exists.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND);
         }
         return this.productRepo.findById(id).get().getName();
     }
 
     /* Get the quantity of the product with specified id */
-    @RequestMapping(path="/quantityId")
-    public @ResponseBody Integer getQuantityID(@RequestParam Integer id) throws Exception{
+    @GetMapping(path="/quantityId")
+    @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody Object getQuantityID(@RequestParam Integer id) {
         if (this.productRepo.existsById(id) == false) {
-            throw new Exception("No product with that id exists.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND);
         }
         return this.productRepo.findById(id).get().getQuantity();
     }
 
     /* Get selling price of item with specified id */
-    @RequestMapping(path="/sellingPriceId")
-    public @ResponseBody Double getSellingPriceID(@RequestParam Integer id) throws Exception{
+    @GetMapping(path="/sellingPriceId")
+    @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody Object getSellingPriceID(@RequestParam Integer id) {
         if (this.productRepo.existsById(id) == false) {
-            throw new Exception("No product with that id exists.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND);
         }
         return this.productRepo.findById(id).get().getSellingPrice();
     }
 
     /* Get paid price of the item with specified id */
-    @RequestMapping(path="/paidPriceId")
-    public @ResponseBody Double getPaidPriceID(@RequestParam Integer id) throws Exception {
+    @GetMapping(path="/paidPriceId")
+    @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody Object getPaidPriceID(@RequestParam Integer id) {
         if (this.productRepo.existsById(id) == false) {
-            throw new Exception("No product with that id exists.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND);
         }
         return this.productRepo.findById(id).get().getPaidPrice();
     }
 
     /* Rename the product with the given id. */
-    @RequestMapping(path="/renameId")
-    public @ResponseBody void renameID(@RequestParam Integer id, @RequestParam String newName) throws Exception {
+    @PatchMapping(path="/renameId")
+    @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody Object renameID(@RequestParam Integer id, @RequestParam String newName) {
 
         Product prod = this.productRepo.existsById(id) == false ? null : this.productRepo.findById(id).get();
         boolean purchaseExists = false;
@@ -76,28 +87,32 @@ public class AppController {
             }
         }
         if (prod == null && purchaseExists == false) {
-            throw new Exception("No product with that id exists.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND);
         }
         if (prod != null) {
             prod.setName(newName);
             this.productRepo.save(prod);
         }
+        return "Renamed";
     }
 
     /* Change the quantity of the product with the given id. */
-    @RequestMapping(path="/updateQuantityId")
-    public @ResponseBody void updateQuantityID(@RequestParam Integer id, @RequestParam Integer quantity) throws Exception {
+    @PatchMapping(path="/updateQuantityId")
+    @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody Object updateQuantityID(@RequestParam Integer id, @RequestParam Integer quantity)  {
         if (this.productRepo.existsById(id) == false) {
-            throw new Exception("No product with that id exists.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND);
         }
         Product prod = this.productRepo.findById(id).get();
         prod.setQuantity(quantity);
         this.productRepo.save(prod);
+        return "Updated";
     }
 
     /* Update paid price of specific product (specified by id). */
-    @RequestMapping(path="/updatePaidPriceId")
-    public @ResponseBody void updatePaidPriceID(@RequestParam Integer id, @RequestParam Double paidPrice) throws Exception {
+    @PatchMapping(path="/updatePaidPriceId")
+    @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody Object updatePaidPriceID(@RequestParam Integer id, @RequestParam Double paidPrice)  {
 
         Product prod = this.productRepo.existsById(id) == false ? null : this.productRepo.findById(id).get();
         boolean purchaseExists = false;
@@ -110,43 +125,49 @@ public class AppController {
             }
         }
         if (prod == null && purchaseExists == false) {
-            throw new Exception("No product with that id exists.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND);
         }
         if (prod != null) {
             prod.setPaidPrice(paidPrice);
             this.productRepo.save(prod);
         }
+        return "Updated";
     }
 
     /* Update selling price of product specified by id. */
-    @RequestMapping(path="/updateSellingPriceId")
-    public @ResponseBody void updateSellingPriceID(@RequestParam Integer id, @RequestParam Double sellingPrice) throws Exception {
+    @PatchMapping(path="/updateSellingPriceId")
+    @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody Object updateSellingPriceID(@RequestParam Integer id, @RequestParam Double sellingPrice)  {
         if (this.productRepo.existsById(id) == false) {
-            throw new Exception("No product with that id exists.");
+           return ResponseEntity.status(HttpStatus.NOT_FOUND);
         }
         Product prod = this.productRepo.findById(id).get();
         prod.setSellingPrice(sellingPrice);
         this.productRepo.save(prod);
+        return "Updated";
     }
 
     /* Removes the product with the given id. */
-    @RequestMapping(path="/deleteId")
-    public @ResponseBody void removeProductID(@RequestParam Integer id) throws Exception {
+    @DeleteMapping(path="/deleteId")
+    @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody Object removeProductID(@RequestParam Integer id) {
         if (this.productRepo.existsById(id) == false) {
-            throw new Exception("No product with that id exists.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND);
         }
         this.productRepo.delete(this.productRepo.findById(id).get());
+        return "Removed.";
     }
 
     /* Purchase `quantity` amount of the product specified by id */
-    @RequestMapping(path="/makePurchaseId")
-    public @ResponseBody void makePurchaseId(@RequestParam Integer id, @RequestParam Integer quantity) throws Exception {
+    @PostMapping(path="/makePurchaseId")
+    @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody Object makePurchaseId(@RequestParam Integer id, @RequestParam Integer quantity)  {
         if (this.productRepo.existsById(id) == false) {
-            throw new Exception("No product with that id exists.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND);
         }
         Product prod = this.productRepo.findById(id).get();
         if (prod.getQuantity() < quantity) {
-            throw new Exception("Purchase cannot be completed because there aren't enough products.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST);
         }
         Purchase newPurchase = new Purchase();
         newPurchase.setProductName(prod.getName());
@@ -163,12 +184,14 @@ public class AppController {
             prod.setQuantity(prod.getQuantity() - quantity);
             this.productRepo.save(prod);
         }
+        return "Purchased.";
 
     }
 
     /* Removes all products with the given name. */
-    @RequestMapping(path="/deleteName")
-    public @ResponseBody void removeProduct(@RequestParam String name) throws Exception {
+    @DeleteMapping(path="/deleteName")
+    @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody Object removeProduct(@RequestParam String name)  {
         int count = 0;
         Iterable<Product> allProducts = this.productRepo.findAll();
         for (Product prod : allProducts) {
@@ -178,13 +201,15 @@ public class AppController {
             }
         }
         if (count == 0) {
-            throw new Exception("No product with that name exists.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND);
         }
+        return "Deleted.";
     }
 
     /* Change the names of all products with the specified name. */
-    @RequestMapping(path="/updateName")
-    public @ResponseBody void updateName(@RequestParam String name, @RequestParam String newName) throws Exception {
+    @PatchMapping(path="/updateName")
+    @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody Object updateName(@RequestParam String name, @RequestParam String newName)  {
         int count = 0;
         Iterable<Product> allProducts = this.productRepo.findAll();
         for (Product prod: allProducts) {
@@ -202,14 +227,16 @@ public class AppController {
             }
         }
         if (count == 0) {
-            throw new Exception("No product with that name exists.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND);
         }
+        return "Updated.";
     }
 
 
     /* Change the selling price of all products with the given name by some offset. */
-    @RequestMapping(path="/updateSellingPriceOffsetName")
-    public @ResponseBody void updateSellingPriceName(@RequestParam String name, @RequestParam Integer priceOffset) throws Exception {
+    @PatchMapping(path="/updateSellingPriceOffsetName")
+    @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody Object updateSellingPriceName(@RequestParam String name, @RequestParam Integer priceOffset) {
         int count = 0;
         Iterable<Product> allProducts = this.productRepo.findAll();
         for (Product prod: allProducts) {
@@ -220,15 +247,18 @@ public class AppController {
             }
         }
         if (count == 0) {
-            throw new Exception("No product with that name exists.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND);
         }
+        return "Updated.";
     }
 
 
 
     /* Calculate expected profit from selling all products with specified name. */
-    @RequestMapping(path="/expectedProfitFromProductName")
-    public @ResponseBody Double getProfitFromProduct(@RequestParam String name) throws Exception {
+    @GetMapping(path="/expectedProfitFromProductName")
+   // @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody Object getProfitFromProduct(@RequestParam String name) {
+
         double profit = 0;
         int count = 0;
         Iterable<Product> allProducts = this.productRepo.findAll();
@@ -239,14 +269,15 @@ public class AppController {
             }
         }
         if (count == 0) {
-            throw new Exception("No product with that name exists.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND);
         }
         return profit;
     }
 
     /* Return list of product-id's sorted by expected profit from selling out (ascending order) */
-    @RequestMapping(path="/listIdByProfitName")
-    public @ResponseBody List<Integer> getListIdByProfitName(@RequestParam String name) throws Exception {
+    @GetMapping(path="/listIdByProfitName")
+    @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody Object getListIdByProfitName(@RequestParam String name) {
         int count = 0;
         List<Integer> idLst = new ArrayList<>();
         List<Double> profitLst = new ArrayList<>();
@@ -266,15 +297,16 @@ public class AppController {
             }
         }
         if (count == 0) {
-            throw new Exception("No product with that name exists.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND);
         }
         return idLst;
     }
 
 
     /* Return the number of products with the specified product name */
-    @RequestMapping(path="/productQuantityName")
-    public @ResponseBody Integer getProductQuantityName(@RequestParam String name) throws Exception {
+    @GetMapping(path="/productQuantityName")
+    @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody Object getProductQuantityName(@RequestParam String name)  {
         int total = 0;
         Iterable<Product> allProducts = this.productRepo.findAll();
         for (Product prod: allProducts) {
@@ -283,70 +315,76 @@ public class AppController {
             }
         }
         if (total == 0) {
-            throw new Exception("No product with that name exists.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND);
         }
         return total;
     }
 
     /* Get productID of purchase specified by datetime. */
-    @RequestMapping(path="/purchaseProductId")
-    public @ResponseBody String getPurchaseProductId(@RequestParam String date) throws Exception {
+    @GetMapping(path="/purchaseProductId")
+    @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody Object getPurchaseProductId(@RequestParam String date) {
         if (this.purchaseRepo.existsById(date) == false) {
-            throw new Exception("No purchase with that date exists.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND);
         }
         Purchase purchase = this.purchaseRepo.findById(date).get();
         return purchase.getProductName();
     }
 
     /* Get product name of purchase specified by datetime. */
-    @RequestMapping(path="/purchaseNameId")
-    public @ResponseBody String getPurchaseName(@RequestParam String date) throws Exception {
+    @GetMapping(path="/purchaseNameId")
+    @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody Object getPurchaseName(@RequestParam String date)  {
         if (this.purchaseRepo.existsById(date) == false) {
-            throw new Exception("No purchase with that date exists.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND);
         }
         Purchase purchase = this.purchaseRepo.findById(date).get();
         return purchase.getProductName();
     }
 
     /* Get profit of purchase specified by datetime. */
-    @RequestMapping(path="/purchaseProfit")
-    public @ResponseBody Double getPurchaseProfit(@RequestParam String date) throws Exception {
+    @GetMapping(path="/purchaseProfit")
+    @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody Object getPurchaseProfit(@RequestParam String date)  {
         if (this.purchaseRepo.existsById(date) == false) {
-            throw new Exception("No purchase with that date exists.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND);
         }
         Purchase purchase = this.purchaseRepo.findById(date).get();
         return purchase.getProfit();
     }
 
     /* Get individual paid price of purchase's product specified by datetime. */
-    @RequestMapping(path="/purchaseIndPaidPrice")
-    public @ResponseBody Double getPaidPricePurchase(@RequestParam String date) throws Exception {
+    @GetMapping(path="/purchaseIndPaidPrice")
+    @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody Object getPaidPricePurchase(@RequestParam String date) {
         if (this.purchaseRepo.existsById(date) == false) {
-            throw new Exception("No purchase with that date exists.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND);
         }
         Purchase purchase = this.purchaseRepo.findById(date).get();
         return purchase.getPaidPrice();
     }
 
     /* Get quantity of purchase's product, specified by datetime. */
-    @RequestMapping(path="/purchaseQuantity")
-    public @ResponseBody Integer getPurchaseQuantity(@RequestParam String date) throws Exception {
+    @GetMapping(path="/purchaseQuantity")
+    @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody Object getPurchaseQuantity(@RequestParam String date) {
         if (this.purchaseRepo.existsById(date) == false) {
-            throw new Exception("No purchase with that date exists.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND);
         }
         Purchase purchase = this.purchaseRepo.findById(date).get();
         return purchase.getQuantity();
     }
 
     /* Return a purchase, specified by datetime. */
-    @RequestMapping(path="/returnPurchase")
-    public @ResponseBody void returnPurchase(@RequestParam String date, @RequestParam Integer quantity) throws Exception {
+    @GetMapping(path="/returnPurchase")
+    @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody Object returnPurchase(@RequestParam String date, @RequestParam Integer quantity)  {
         if (this.purchaseRepo.existsById(date) == false) {
-            throw new Exception("No purchase with that date exists.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND);
         }
         Purchase purchase = this.purchaseRepo.findById(date).get();
         if (purchase.getQuantity() < quantity) {
-            throw new Exception("No purchase wtih that quantity exists.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST);
         }
         ReturnedProduct newReturn = new ReturnedProduct();
         newReturn.setReturnTimestamp();
@@ -368,11 +406,13 @@ public class AppController {
             purchase.setProfit((sellingPrice - purchase.getPaidPrice())* purchase.getQuantity());
             this.purchaseRepo.save(purchase);
         }
+        return "Returned.";
     }
 
     /* Returns the total profit made starting from the input date */
-    @RequestMapping(path="/profitStart")
-    public @ResponseBody Double getProfitStart(@RequestParam String date) throws Exception {
+    @GetMapping(path="/profitStart")
+    @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody Object getProfitStart(@RequestParam String date)  {
         int count = 0;
         double profit = 0;
         LocalDateTime startDate = LocalDateTime.parse(date);
@@ -386,14 +426,15 @@ public class AppController {
             }
         }
         if (count == 0) {
-            throw new Exception("There are no purchases after the input date.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND);
         }
         return profit;
     }
 
     /* Returns the total profit made before the input date */
-    @RequestMapping(path="/profitEnd")
-    public @ResponseBody Double getProfitEnd(@RequestParam String date) throws Exception {
+    @GetMapping(path="/profitEnd")
+    @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody Object getProfitEnd(@RequestParam String date) {
         int count = 0;
         double profit = 0;
         LocalDateTime startDate = LocalDateTime.parse(date);
@@ -407,16 +448,17 @@ public class AppController {
             }
         }
         if (count == 0) {
-            throw new Exception("There are no purchases after the input date.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND);
         }
         return profit;
     }
 
     /* Get productID, provided return's PR gap in days */
-    @RequestMapping(path="/returnPRGap")
-    public @ResponseBody Long returnPRGap(@RequestParam String date) throws Exception {
+    @GetMapping(path="/returnPRGap")
+    @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody Object returnPRGap(@RequestParam String date)  {
         if (this.returnRepo.existsById(date) == false) {
-            throw new Exception("No return with that date exists.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND);
         }
         ReturnedProduct returnObj = this.returnRepo.findById(date).get();
         return returnObj.getprGap();
@@ -424,10 +466,11 @@ public class AppController {
 
 
     /* Get productID, provided return's timestamp */
-    @RequestMapping(path="/returnProductID")
-    public @ResponseBody Integer returnProductID(@RequestParam String date) throws Exception {
+    @GetMapping(path="/returnProductID")
+    @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody Object returnProductID(@RequestParam String date) {
         if (this.returnRepo.existsById(date) == false) {
-            throw new Exception("No return with that date exists.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND);
         }
         ReturnedProduct returnObj = this.returnRepo.findById(date).get();
         return returnObj.getProductId();
@@ -435,40 +478,44 @@ public class AppController {
 
 
     /* Get product name, provided return's timestamp */
-    @RequestMapping(path="/returnProductName")
-    public @ResponseBody String returnProductName(@RequestParam String date) throws Exception {
+    @GetMapping(path="/returnProductName")
+    @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody Object returnProductName(@RequestParam String date) {
         if (this.returnRepo.existsById(date) == false) {
-            throw new Exception("No return with that date exists.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND);
         }
         ReturnedProduct returnObj = this.returnRepo.findById(date).get();
         return returnObj.getProductName();
     }
 
     /* Get product quantity, provided the return's timestamp*/
-    @RequestMapping(path="/returnQuantity")
-    public @ResponseBody Integer returnQuantity(@RequestParam String date) throws Exception {
+    @GetMapping(path="/returnQuantity")
+    @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody Object returnQuantity(@RequestParam String date) {
         if (this.returnRepo.existsById(date) == false) {
-            throw new Exception("No return with that date exists.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND);
         }
         ReturnedProduct returnObj = this.returnRepo.findById(date).get();
         return returnObj.getQuantity();
     }
 
     /* Get selling price, provided the return's timestamp */
-    @RequestMapping(path="/returnSellingPrice")
-    public @ResponseBody Double returnSellingPrice(@RequestParam String date) throws Exception {
+    @GetMapping(path="/returnSellingPrice")
+    @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody Object returnSellingPrice(@RequestParam String date) {
         if (this.returnRepo.existsById(date) == false) {
-            throw new Exception("No return with that date exists.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND);
         }
         ReturnedProduct returnObj = this.returnRepo.findById(date).get();
         return returnObj.getSellingPrice();
     }
 
     /* Get paid price, provided the return's timestamp */
-    @RequestMapping(path="/returnPaidPrice")
-    public @ResponseBody Double returnPaidPrice(@RequestParam String date) throws Exception {
+    @GetMapping(path="/returnPaidPrice")
+    @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody Object returnPaidPrice(@RequestParam String date) {
         if (this.returnRepo.existsById(date) == false) {
-            throw new Exception("No return with that date exists.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND);
         }
         ReturnedProduct returnObj = this.returnRepo.findById(date).get();
         return returnObj.getPaidPrice();
@@ -476,9 +523,10 @@ public class AppController {
 
     /* Process a return; add the product back to the product table with specified selling price */
     @RequestMapping(path="/processReturn")
-    public @ResponseBody void processReturn(@RequestParam String date, @RequestParam Double sellingPrice) throws Exception {
+    @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody Object processReturn(@RequestParam String date, @RequestParam Double sellingPrice)  {
         if (this.returnRepo.existsById(date) == false) {
-            throw new Exception("No return with that date exists.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND);
         }
         ReturnedProduct returnObj = this.returnRepo.findById(date).get();
         if (this.productRepo.existsById(returnObj.getProductId())) {
@@ -497,17 +545,20 @@ public class AppController {
         prod.setSellingPrice(sellingPrice);
         this.productRepo.save(prod);
         this.returnRepo.delete(returnObj);
+        return "Processed.";
 
     }
 
     /* Discards a return, specified by datetime */
-    @RequestMapping(path="/removeReturn")
-    public @ResponseBody void removeReturn(@RequestParam String date) throws Exception{
+    @DeleteMapping(path="/removeReturn")
+    @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody Object removeReturn(@RequestParam String date){
         if (this.returnRepo.existsById(date) == false) {
-            throw new Exception("No return with that date exists.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND);
         }
         ReturnedProduct returnObj = this.returnRepo.findById(date).get();
         this.returnRepo.delete(returnObj);
+        return "Updated.";
     }
 
 
@@ -523,14 +574,15 @@ public class AppController {
 
     /*Takes in a quantity, returns maximum profit from selling the specified
     number of products. */
-    @RequestMapping(path="/expectedProfitMax")
-    public @ResponseBody Double getExpectedProfitMax(@RequestParam Integer quantity) throws Exception {
+    @GetMapping(path="/expectedProfitMax")
+    @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody Object getExpectedProfitMax(@RequestParam Integer quantity)  {
 
         if (countProducts() < quantity) {
-            throw new Exception("There aren't that many products available.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND);
         }
         if (quantity <= 0) {
-            throw new Exception("Invalid quantity.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST);
         }
         List<Integer> qLst = new ArrayList<>();
         List<Double> profitLst = new ArrayList<>();
@@ -567,14 +619,15 @@ public class AppController {
 
     /*Takes in a quantity, returns minimum profit from selling the specified
     number of products. */
-    @RequestMapping(path="/expectedProfitMin")
-    public @ResponseBody Double getExpectedProfitMin(@RequestParam Integer quantity) throws Exception {
+    @GetMapping(path="/expectedProfitMin")
+    @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody Object getExpectedProfitMin(@RequestParam Integer quantity) {
 
         if (countProducts() < quantity) {
-            throw new Exception("There aren't that many products available.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND);
         }
         if (quantity <= 0) {
-            throw new Exception("Invalid quantity.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST);
         }
         List<Integer> qLst = new ArrayList<>();
         List<Double> profitLst = new ArrayList<>();
@@ -608,13 +661,14 @@ public class AppController {
     }
 
     /*  Takes in a quantity, returns a list of productid’s that have at least the specified number of items */
-    @RequestMapping(path="/checkInventoryLowerBound")
-    public @ResponseBody List<Integer> checkInventoryLowerBound(@RequestParam Integer quantity) throws Exception {
+    @GetMapping(path="/checkInventoryLowerBound")
+    @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody Object checkInventoryLowerBound(@RequestParam Integer quantity)  {
         if (countProducts() < quantity) {
-            throw new Exception("There aren't that many products available.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND);
         }
         if (quantity <= 0) {
-            throw new Exception("Invalid quantity.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST);
         }
         List<Integer> productIDs = new ArrayList<>();
         for (Product product : this.productRepo.findAll()) {
@@ -627,13 +681,14 @@ public class AppController {
     /*  Takes in a quantity, returns a list of productid’s where each product
     corresponding to the product id has a quantity less than or equal to
      the specified number of items */
-    @RequestMapping(path="/checkInventoryUpperBound")
-    public @ResponseBody List<Integer> checkInventoryUpperBound(@RequestParam Integer quantity) throws Exception {
+    @GetMapping(path="/checkInventoryUpperBound")
+    @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody Object checkInventoryUpperBound(@RequestParam Integer quantity) {
         if (countProducts() < quantity) {
-            throw new Exception("There aren't that many products available.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND);
         }
         if (quantity <= 0) {
-            throw new Exception("Invalid quantity.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST);
         }
         List<Integer> productIDs = new ArrayList<>();
         for (Product product : this.productRepo.findAll()) {
@@ -647,7 +702,8 @@ public class AppController {
     /* Takes in a profit value and returns a list of productid’s such that each
     product corresponding to the id will yield a profit that is greater than or equal
     to the specified value (by selling one) */
-    @RequestMapping(path="/individualItemFilterLowerBound")
+    @GetMapping(path="/individualItemFilterLowerBound")
+    @ResponseStatus(HttpStatus.OK)
     public @ResponseBody List<Integer> applyIndividualItemFilterLowerBound(@RequestParam Double profit) {
         List<Integer> ids = new ArrayList<>();
         for (Product product : this.productRepo.findAll()) {
@@ -661,7 +717,8 @@ public class AppController {
     /* Takes in a profit value and returns a list of productid’s such that each
     product corresponding to the id will yield a profit that is less than or equal
     to the specified value (by selling one) */
-    @RequestMapping(path="/individualItemFilterUpperBound")
+    @GetMapping(path="/individualItemFilterUpperBound")
+    @ResponseStatus(HttpStatus.OK)
     public @ResponseBody List<Integer> applyIndividualItemFilterUpperBound(@RequestParam Double profit) {
         List<Integer> ids = new ArrayList<>();
         for (Product product : this.productRepo.findAll()) {
@@ -674,7 +731,8 @@ public class AppController {
 
 
     /* Takes in no arguments, returns the total profit made from purchases in the purchase table */
-    @RequestMapping(path= "/totalProfit")
+    @GetMapping(path= "/totalProfit")
+    @ResponseStatus(HttpStatus.OK)
     public @ResponseBody Double getTotalProfit() {
         double total = 0;
         for (Purchase purchase : this.purchaseRepo.findAll()) {
@@ -684,10 +742,11 @@ public class AppController {
     }
 
     /* Takes in no arguments, returns the average profit per purchase */
-    @RequestMapping(path="/averageProfitPerPurchase")
-    public @ResponseBody Double getAvgProfitPerPurchase() throws Exception {
+    @GetMapping(path="/averageProfitPerPurchase")
+    @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody Object getAvgProfitPerPurchase()  {
         if (this.purchaseRepo.count() == 0) {
-            throw new Exception("There are no purchases.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND);
         }
         double total = 0;
         for (Purchase purchase : this.purchaseRepo.findAll()) {
@@ -697,10 +756,11 @@ public class AppController {
     }
 
     /* Takes in no arguments, returns the standard deviation of the profits of the purchases  so far */
-    @RequestMapping(path="/stdProfitPurchase")
-    public @ResponseBody Double getStdProfitPerPurchase() throws Exception {
+    @GetMapping(path="/stdProfitPurchase")
+    @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody Object getStdProfitPerPurchase()  {
         if (this.purchaseRepo.count() == 0) {
-            throw new Exception("There are no purchases.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND);
         }
         double total = 0;
         for (Purchase purchase : this.purchaseRepo.findAll()) {
@@ -715,10 +775,11 @@ public class AppController {
     }
 
     /* Takes in no arguments, returns the average paid price of all purchases made */
-    @RequestMapping(path="/averagePaidPricePurchase")
-    public @ResponseBody Double getAvgPaidPricePurchase() throws Exception {
+    @GetMapping(path="/averagePaidPricePurchase")
+    @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody Object getAvgPaidPricePurchase() {
         if (this.purchaseRepo.count() == 0) {
-            throw new Exception("There are no purchases.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND);
         }
         double total = 0;
         for (Purchase purchase : this.purchaseRepo.findAll()) {
@@ -728,10 +789,11 @@ public class AppController {
     }
 
     /* Takes in no arguments, returns the standard deviation of paid prices of all purchases made*/
-    @RequestMapping(path="/stdPaidPricePurchase")
-    public @ResponseBody Double getStdPaidPricePurchase() throws Exception {
+    @GetMapping(path="/stdPaidPricePurchase")
+    @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody Object getStdPaidPricePurchase() {
         if (this.purchaseRepo.count() == 0) {
-            throw new Exception("There are no purchases.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND);
         }
         double total = 0;
         for (Purchase purchase : this.purchaseRepo.findAll()) {
@@ -752,7 +814,8 @@ public class AppController {
 
 
     /* Return list of product-id's sorted by expected profit from selling out (ascending order) */
-    @RequestMapping(path="/listIdByProfit")
+    @GetMapping(path="/listIdByProfit")
+    @ResponseStatus(HttpStatus.OK)
     public @ResponseBody List<Integer> getListIdByProfit()  {
 
         List<Integer> idLst = new ArrayList<>();
@@ -774,26 +837,30 @@ public class AppController {
     }
 
     /* Return all Purchases in the purchase table */
-    @RequestMapping(path="/allPurchases")
+    @GetMapping(path="/allPurchases")
+    @ResponseStatus(HttpStatus.OK)
     public @ResponseBody Iterable<Purchase> getAllPurchases() {
         return this.purchaseRepo.findAll();
     }
 
     /* Return all Returns in the returned_product table */
-    @RequestMapping(path="/allReturns")
+    @GetMapping(path="/allReturns")
+    @ResponseStatus(HttpStatus.OK)
     public @ResponseBody Iterable<ReturnedProduct> getAllReturns() {
         return this.returnRepo.findAll();
     }
 
     /* Return all products in product table. */
-    @RequestMapping(path="/allProducts")
+    @GetMapping(path="/allProducts")
+    @ResponseStatus(HttpStatus.OK)
     public @ResponseBody Iterable<Product> getAllProducts() {
         /* Returns a JSON or XML with the products */
         return this.productRepo.findAll();
     }
 
     /* Add a product to the product table. */
-    @RequestMapping(path="/add")
+    @PostMapping(path="/add")
+    @ResponseStatus(HttpStatus.OK)
     public @ResponseBody void addNewProduct(@RequestParam String name, @RequestParam Integer quantity,
                                               @RequestParam Double paidPrice, @RequestParam Double sellingPrice) {
 
@@ -806,7 +873,8 @@ public class AppController {
     }
 
     /* Calculate profit from selling all products in the table. */
-    @RequestMapping(path="/expectedProfit")
+    @GetMapping(path="/expectedProfit")
+    @ResponseStatus(HttpStatus.OK)
     public @ResponseBody Double getProfit() {
         double profit = 0;
         Iterable<Product> allProducts = this.productRepo.findAll();
@@ -817,15 +885,17 @@ public class AppController {
     }
 
     /*  Delete all entries in the product and purchase tables. */
-    @RequestMapping(path="/clear")
+    @DeleteMapping(path="/clear")
+    @ResponseStatus(HttpStatus.OK)
     public @ResponseBody void clear() {
         this.db.resetID();
     }
 
     /*  Takes in no arguments, returns the average selling prices of the products for sale */
-    @RequestMapping(path="/averageSellingPriceProduct")
-    public @ResponseBody Double getAvgSellingPriceProduct() throws Exception {
-        if (this.productRepo.count() == 0) {throw new Exception("There are no products.");}
+    @GetMapping(path="/averageSellingPriceProduct")
+    @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody Object getAvgSellingPriceProduct() {
+        if (this.productRepo.count() == 0) { return ResponseEntity.status(HttpStatus.NOT_FOUND);}
         double total = 0;
         double counter = 0;
         for (Product product : this.productRepo.findAll()) {
@@ -836,9 +906,10 @@ public class AppController {
     }
 
     /* Takes in no arguments, returns the standard deviation of the selling prices of the products */
-    @RequestMapping(path="/stdSellingPriceProduct")
-    public @ResponseBody Double getStdSellingPriceProduct() throws Exception {
-        if (this.productRepo.count() == 0) {throw new Exception("There are no products.");}
+    @GetMapping(path="/stdSellingPriceProduct")
+    @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody Object getStdSellingPriceProduct()  {
+        if (this.productRepo.count() == 0) { return ResponseEntity.status(HttpStatus.NOT_FOUND);}
         double total = 0;
         double counter = 0;
         for (Product product : this.productRepo.findAll()) {
@@ -854,9 +925,10 @@ public class AppController {
     }
 
     /*  Takes in no arguments, returns the average paid prices of the products for sale */
-    @RequestMapping(path="/averagePaidPriceProduct")
-    public @ResponseBody Double getAvgPaidPriceProduct() throws Exception {
-        if (this.productRepo.count() == 0) {throw new Exception("There are no products.");}
+    @GetMapping(path="/averagePaidPriceProduct")
+    @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody Object getAvgPaidPriceProduct()  {
+        if (this.productRepo.count() == 0) { return ResponseEntity.status(HttpStatus.NOT_FOUND);}
         double total = 0;
         double counter = 0;
         for (Product product : this.productRepo.findAll()) {
@@ -867,9 +939,10 @@ public class AppController {
     }
 
     /* Takes in no arguments, returns the standard deviation of the paid prices of the products */
-    @RequestMapping(path="/stdPaidPriceProduct")
-    public @ResponseBody Double getStdPaidPriceProduct() throws Exception {
-        if (this.productRepo.count() == 0) {throw new Exception("There are no products.");}
+    @GetMapping(path="/stdPaidPriceProduct")
+    @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody Object getStdPaidPriceProduct() {
+        if (this.productRepo.count() == 0) { return ResponseEntity.status(HttpStatus.NOT_FOUND);}
         double total = 0;
         double counter = 0;
         for (Product product : this.productRepo.findAll()) {
@@ -885,9 +958,10 @@ public class AppController {
     }
 
     /* Takes in no arguments, returns mean of return gap */
-    @RequestMapping(path="/averageReturnGap")
-    public @ResponseBody Double getAvgReturnGap() throws Exception {
-        if (this.returnRepo.count() == 0) {throw new Exception("There are no returns.");}
+    @GetMapping(path="/averageReturnGap")
+    @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody Object getAvgReturnGap() {
+        if (this.returnRepo.count() == 0) {return ResponseEntity.status(HttpStatus.NOT_FOUND);}
         double sum = 0;
         for (ReturnedProduct rp : this.returnRepo.findAll()) {
             sum += rp.getprGap();
@@ -897,9 +971,10 @@ public class AppController {
     }
 
     /* Takes in no arguments, returns standard deviation of return gaps */
-    @RequestMapping(path="/stdReturnGap")
-    public @ResponseBody Double getStdReturngap() throws Exception {
-        if (this.returnRepo.count() == 0) {throw new Exception("There are no returns.");}
+    @GetMapping(path="/stdReturnGap")
+    @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody Object getStdReturngap() {
+        if (this.returnRepo.count() == 0) {return ResponseEntity.status(HttpStatus.NOT_FOUND);}
         double sum = 0;
         for (ReturnedProduct rp : this.returnRepo.findAll()) {
             sum += rp.getprGap();
@@ -913,9 +988,10 @@ public class AppController {
     }
 
     /* Takes in no arguments, returns mean of paid price of returns */
-    @RequestMapping(path="/averagePaidPriceReturn")
-    public @ResponseBody Double getAvgPaidPriceReturn() throws Exception {
-        if (this.returnRepo.count() == 0) {throw new Exception("There are no returns.");}
+    @GetMapping(path="/averagePaidPriceReturn")
+    @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody Object getAvgPaidPriceReturn() {
+        if (this.returnRepo.count() == 0) {return ResponseEntity.status(HttpStatus.NOT_FOUND);}
         double sum = 0;
         for (ReturnedProduct rp : this.returnRepo.findAll()) {
             sum += rp.getPaidPrice() * rp.getQuantity();
@@ -924,9 +1000,10 @@ public class AppController {
     }
 
     /* Takes in no arguments, returns standard deviation of paid prices of returns */
-    @RequestMapping(path="/stdPaidPriceReturn")
-    public @ResponseBody Double getStdPaidPriceReturn() throws Exception {
-        if (this.returnRepo.count() == 0) {throw new Exception("There are no returns.");}
+    @GetMapping(path="/stdPaidPriceReturn")
+    @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody Object getStdPaidPriceReturn() {
+        if (this.returnRepo.count() == 0) {return ResponseEntity.status(HttpStatus.NOT_FOUND);}
         double sum = 0;
         for (ReturnedProduct rp : this.returnRepo.findAll()) {
             sum += rp.getPaidPrice() * rp.getQuantity();
@@ -941,9 +1018,10 @@ public class AppController {
     }
 
     /* Takes in no arguments, returns mean of selling prices of returns */
-    @RequestMapping(path="/averageSellingPriceReturn")
-    public @ResponseBody Double getAvgSellingPriceReturn() throws Exception {
-        if (this.returnRepo.count() == 0) {throw new Exception("There are no returns.");}
+    @GetMapping(path="/averageSellingPriceReturn")
+    @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody Object getAvgSellingPriceReturn() {
+        if (this.returnRepo.count() == 0) { return ResponseEntity.status(HttpStatus.NOT_FOUND);}
         double sum = 0;
         for (ReturnedProduct rp : this.returnRepo.findAll()) {
             sum += rp.getSellingPrice() * rp.getQuantity();
@@ -952,9 +1030,10 @@ public class AppController {
     }
 
     /* Takes in no arguments, returns standard deviation of selling prices of returns */
-    @RequestMapping(path="/stdSellingPriceReturn")
-    public @ResponseBody Double getStdSellingdPriceReturn() throws Exception {
-        if (this.returnRepo.count() == 0) {throw new Exception("There are no returns.");}
+    @GetMapping(path="/stdSellingPriceReturn")
+    @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody Object getStdSellingdPriceReturn() {
+        if (this.returnRepo.count() == 0) {return ResponseEntity.status(HttpStatus.NOT_FOUND);}
         double sum = 0;
         for (ReturnedProduct rp : this.returnRepo.findAll()) {
             sum += rp.getSellingPrice() * rp.getQuantity();
